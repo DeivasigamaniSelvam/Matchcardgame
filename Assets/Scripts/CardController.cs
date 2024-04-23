@@ -7,7 +7,7 @@ public class CardController : MonoBehaviour
 {
 
     public static CardController Instance;
-    public static int gameSize = 3;
+    public static int gameSize = 2;
     [SerializeField]
     private GameObject prefab;
     [SerializeField]
@@ -17,8 +17,8 @@ public class CardController : MonoBehaviour
     [SerializeField]
     private Sprite[] sprites;
     private MatchCards[] cards;
-
-
+    int score, hiscore = 0;
+    public Text ScoreText, HighScoretText;
     [SerializeField]
     private GameObject panel;
     [SerializeField]
@@ -38,6 +38,11 @@ public class CardController : MonoBehaviour
     }
     void Start()
     {
+        if(PlayerPrefs.HasKey("HighScoretText"))
+        {
+            hiscore = PlayerPrefs.GetInt("HighScoretText", hiscore);
+            HighScoretText.text = "HighScore: "+hiscore.ToString();
+        }
         gameStart = false;
         panel.SetActive(false);
     }
@@ -108,11 +113,11 @@ public class CardController : MonoBehaviour
         }
 
     }
-    void ResetFace()
-    {
-        for (int i = 0; i < gameSize; i++)
-            cards[i].ResetRotation();
-    }
+    //void ResetFace()
+    //{
+    //    for (int i = 0; i < gameSize; i++)
+    //        cards[i].ResetRotation();
+    //}
     IEnumerator HideFace()
     {
         yield return new WaitForSeconds(0.3f);
@@ -181,6 +186,13 @@ public class CardController : MonoBehaviour
                 cards[cardId].Inactive();
                 cardLeft -= 2;
                 CheckGameWin();
+                score += 5;
+                ScoreText.text = "Score " +score.ToString();
+                if (score > hiscore)
+                {
+                    HighScoretText.text = "HighScore: " + score.ToString();
+                    PlayerPrefs.SetInt("HighScoretText", score);
+                }
             }
             else
             {
