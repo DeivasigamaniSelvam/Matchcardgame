@@ -7,7 +7,9 @@ public class CardController : MonoBehaviour
 {
 
     public static CardController Instance;
-    public static int gameSize = 2;
+    public AudioSource audiosource;
+    public AudioClip[] audioclip;
+    public static int gameSize = 2, Levelcount = 2;
     [SerializeField]
     private GameObject prefab;
     [SerializeField]
@@ -17,21 +19,16 @@ public class CardController : MonoBehaviour
     [SerializeField]
     private Sprite[] sprites;
     private MatchCards[] cards;
-    int score, hiscore = 0;
-    public Text ScoreText, HighScoretText;
+    int score = 0, hiscore = 0;
+    public Text ScoreText, HighScoretText, LevelcountText;
     [SerializeField]
-    private GameObject panel;
-    [SerializeField]
-    private GameObject info;
-    [SerializeField]
-    private Text timeLabel;
-    private float time;
-
+    private GameObject GamePlayArea, InGameUI;
     private int spriteSelected;
     private int cardSelected;
     private int cardLeft;
     private bool gameStart;
-
+    public Sprite[] soundIcons;
+    public Image soundButton;
     void Awake()
     {
         Instance = this;
@@ -43,23 +40,29 @@ public class CardController : MonoBehaviour
             hiscore = PlayerPrefs.GetInt("HighScoretText", hiscore);
             HighScoretText.text = "HighScore: "+hiscore.ToString();
         }
+
+        {
+            Levelcount = PlayerPrefs.GetInt("LevelcountText", Levelcount);
+            gameSize = Levelcount;
+            LevelcountText.text = (Levelcount + "X" + Levelcount).ToString();
+        }
         gameStart = false;
-        panel.SetActive(false);
+        GamePlayArea.SetActive(false);
+        InGameUI.SetActive(false);
     }
     public void StartCardGame()
     {
+        PlayAudiobyIndex(4);
         if (gameStart) return; 
         gameStart = true;
-        panel.SetActive(true);
-        info.SetActive(false);
+        GamePlayArea.SetActive(true);
+        InGameUI.SetActive(true);
         SetGamePanel();
         cardSelected = spriteSelected = -1;
         cardLeft = cards.Length;
         SpriteCardAllocation();
-        StartCoroutine(HideFace());
-        time = 0;
+        StartCoroutine(HideFace()); 
     }
-
     private void SetGamePanel(){
         int isOdd = gameSize % 2 ;
 
@@ -68,7 +71,7 @@ public class CardController : MonoBehaviour
         {
             GameObject.Destroy(child.gameObject);
         }
-        RectTransform panelsize = panel.transform.GetComponent(typeof(RectTransform)) as RectTransform;
+        RectTransform panelsize = GamePlayArea.transform.GetComponent(typeof(RectTransform)) as RectTransform;
         float row_size = panelsize.sizeDelta.x;
         float col_size = panelsize.sizeDelta.y;
         float scale = 1.0f/gameSize;
@@ -113,11 +116,6 @@ public class CardController : MonoBehaviour
         }
 
     }
-    //void ResetFace()
-    //{
-    //    for (int i = 0; i < gameSize; i++)
-    //        cards[i].ResetRotation();
-    //}
     IEnumerator HideFace()
     {
         yield return new WaitForSeconds(0.3f);
@@ -177,6 +175,7 @@ public class CardController : MonoBehaviour
         {
             spriteSelected = spriteId;
             cardSelected = cardId;
+            PlayAudiobyIndex(3);
         }
         else
         { 
@@ -187,17 +186,19 @@ public class CardController : MonoBehaviour
                 cardLeft -= 2;
                 CheckGameWin();
                 score += 5;
-                ScoreText.text = "Score " +score.ToString();
+                ScoreText.text = "Score: " +score.ToString();
                 if (score > hiscore)
                 {
                     HighScoretText.text = "HighScore: " + score.ToString();
                     PlayerPrefs.SetInt("HighScoretText", score);
                 }
+                PlayAudiobyIndex(2);
             }
             else
             {
                 cards[cardSelected].Flip();
                 cards[cardId].Flip();
+                PlayAudiobyIndex(1);
             }
             cardSelected = spriteSelected = -1;
         }
@@ -206,26 +207,51 @@ public class CardController : MonoBehaviour
     {
         if (cardLeft == 0)
         {
+            Levelcount += 1;
             EndGame();
+            gameSize = Levelcount;
+            PlayAudiobyIndex(0);
         }
     }
     private void EndGame()
     {
         gameStart = false;
-        panel.SetActive(false);
+        GamePlayArea.SetActive(false);
+        InGameUI.SetActive(false);
+        LevelcountText.text = (Levelcount + "X" + Levelcount).ToString();
+        PlayerPrefs.SetInt("LevelcountText", Levelcount);
     }
-    public void GiveUp()
+    public void Reset()
     {
         EndGame();
+        PlayAudiobyIndex(4);
     }
-    public void DisplayInfo(bool i)
+    public void DisplayResult()
     {
-        info.SetActive(i);
+        InGameUI.SetActive(true);
     }
-    //private void Update(){
-    //    if (gameStart) {
-    //        time += Time.deltaTime;
-    //        timeLabel.text = "Time: " + time + "s";
-    //    }
-    //}
+    int i = 1;
+    public void SoundController()
+    {
+       i++;
+       if(i%2 == 0)
+       {
+            soundButton.sprite = soundIcons[0];
+            audiosource.volume = 0;
+       }
+       else
+       {
+            soundButton.sprite = soundIcons[1];
+       }
+    }
+    void PlayAudiobyIndex(int index)
+    {
+        audiosource.clip = audioclip[index];
+        audiosource.Play();
+    }
+    public void Help(int index)
+    {
+        audiosource.clip = audioclip[index];
+        audiosource.Play();
+    }
 }
