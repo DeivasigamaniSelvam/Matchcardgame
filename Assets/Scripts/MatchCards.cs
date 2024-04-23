@@ -1,16 +1,18 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MatchCards : MonoBehaviour
 {
+
     private int spriteID;
     private int id;
     private bool flipped;
     private bool turning;
     [SerializeField]
     private Image img;
+
     private IEnumerator Flip90(Transform thisTransform, float time, bool changeSprite)
     {
         Quaternion startRotation = thisTransform.rotation;

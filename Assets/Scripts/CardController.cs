@@ -1,33 +1,28 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CardController : MonoBehaviour
 {
+
     public static CardController Instance;
-    public static int gameSize = 2;
+    public static int gameSize = 3;
     [SerializeField]
-    private GameObject Card_Position;
+    private GameObject prefab;
     [SerializeField]
     private GameObject cardList;
     [SerializeField]
     private Sprite cardBack;
     [SerializeField]
     private Sprite[] sprites;
-    // list of card
     private MatchCards[] cards;
+
 
     [SerializeField]
     private GameObject panel;
     [SerializeField]
     private GameObject info;
-    [SerializeField]
-    private MatchCards spritePreload;
-    [SerializeField]
-    private Text sizeLabel;
-    [SerializeField]
-    private Slider sizeSlider;
     [SerializeField]
     private Text timeLabel;
     private float time;
@@ -46,15 +41,9 @@ public class CardController : MonoBehaviour
         gameStart = false;
         panel.SetActive(false);
     }
-    private void PreloadCardImage()
-    {
-        for (int i = 0; i < sprites.Length; i++)
-            spritePreload.SpriteID = i;
-        spritePreload.gameObject.SetActive(false);
-    }
     public void StartCardGame()
     {
-        if (gameStart) return;
+        if (gameStart) return; 
         gameStart = true;
         panel.SetActive(true);
         info.SetActive(false);
@@ -65,9 +54,9 @@ public class CardController : MonoBehaviour
         StartCoroutine(HideFace());
         time = 0;
     }
-    private void SetGamePanel()
-    {
-        int isOdd = gameSize % 2;
+
+    private void SetGamePanel(){
+        int isOdd = gameSize % 2 ;
 
         cards = new MatchCards[gameSize * gameSize - isOdd];
         foreach (Transform child in cardList.transform)
@@ -77,22 +66,22 @@ public class CardController : MonoBehaviour
         RectTransform panelsize = panel.transform.GetComponent(typeof(RectTransform)) as RectTransform;
         float row_size = panelsize.sizeDelta.x;
         float col_size = panelsize.sizeDelta.y;
-        float scale = 1.0f / gameSize;
-        float xInc = row_size / gameSize;
-        float yInc = col_size / gameSize;
+        float scale = 1.0f/gameSize;
+        float xInc = row_size/gameSize;
+        float yInc = col_size/gameSize;
         float curX = -xInc * (float)(gameSize / 2);
         float curY = -yInc * (float)(gameSize / 2);
 
-        if (isOdd == 0)
-        {
+        if(isOdd == 0) {
             curX += xInc / 2;
             curY += yInc / 2;
         }
         float initialX = curX;
-
+        // for each in y-axis
         for (int i = 0; i < gameSize; i++)
         {
             curX = initialX;
+            // for each in x-axis
             for (int j = 0; j < gameSize; j++)
             {
                 GameObject c;
@@ -103,7 +92,7 @@ public class CardController : MonoBehaviour
                 }
                 else
                 {
-                    c = Instantiate(Card_Position);
+                    c = Instantiate(prefab);
                     c.transform.parent = cardList.transform;
 
                     int index = i * gameSize + j;
@@ -135,7 +124,7 @@ public class CardController : MonoBehaviour
     {
         int i, j;
         int[] selectedID = new int[cards.Length / 2];
-        for (i = 0; i < cards.Length / 2; i++)
+        for (i = 0; i < cards.Length/2; i++)
         {
             int value = Random.Range(0, sprites.Length - 1);
             for (j = i; j > 0; j--)
@@ -145,6 +134,7 @@ public class CardController : MonoBehaviour
             }
             selectedID[i] = value;
         }
+
         for (i = 0; i < cards.Length; i++)
         {
             cards[i].Active();
@@ -220,4 +210,10 @@ public class CardController : MonoBehaviour
     {
         info.SetActive(i);
     }
+    //private void Update(){
+    //    if (gameStart) {
+    //        time += Time.deltaTime;
+    //        timeLabel.text = "Time: " + time + "s";
+    //    }
+    //}
 }

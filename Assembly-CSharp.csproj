@@ -56,8 +56,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
-    <Compile Include="Assets\Scripts\CardController.cs" />
     <Compile Include="Assets\Scripts\MatchCards.cs" />
+    <Compile Include="Assets\Scripts\CardController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
