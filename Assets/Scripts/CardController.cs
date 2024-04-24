@@ -7,7 +7,7 @@ public class CardController : MonoBehaviour
 {
 
     public static CardController Instance;
-    public AudioSource audiosource;
+    public AudioSource audiosource, bgaudiosource;
     public AudioClip[] audioclip;
     public static int gameSize = 2, Levelcount = 2;
     [SerializeField]
@@ -85,11 +85,9 @@ public class CardController : MonoBehaviour
             curY += yInc / 2;
         }
         float initialX = curX;
-        // for each in y-axis
         for (int i = 0; i < gameSize; i++)
         {
             curX = initialX;
-            // for each in x-axis
             for (int j = 0; j < gameSize; j++)
             {
                 GameObject c;
@@ -238,11 +236,14 @@ public class CardController : MonoBehaviour
        {
             soundButton.sprite = soundIcons[0];
             audiosource.volume = 0;
-       }
+            bgaudiosource.volume = 0;
+        }
        else
        {
             soundButton.sprite = soundIcons[1];
-       }
+			audiosource.volume = 1;
+            bgaudiosource.volume = 0.5f;
+        }
     }
     void PlayAudiobyIndex(int index)
     {
