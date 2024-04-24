@@ -9,4 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MatchCardGame.unity
     guid: 3fc8acdd13e6c734bafef6554d6fdbcd
   m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: 3a251369e3b6e104dad66fde715d793e, type: 2}
+    com.unity.adaptiveperformance.samsung.android.provider_settings: {fileID: 11400000, guid: c1b4a9570e1ef594397fa5f2f1edae78, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: cce4dba14d7334842b3e4d04ba7c263f, type: 2}
